@@ -8,7 +8,7 @@
 
 # DeepFakeDetective: Revolutionizing Media Integrity with AI Deepfake Detection, Authenticity Verification, Content Validation, and Media Analysis! 🕵️‍♂️🔍
 
-🔍🔒 Step into the forefront of media integrity with **DeepFakeDetective**, where advanced technology safeguards authenticity. Our state-of-the-art platform leads the fight against deceptive content by employing AI-powered deepfake detection, ensuring the veracity of every piece of media. Experience peace of mind as our platform verifies the authenticity of images, audio, and videos, protecting against manipulation and misinformation. Join us in preserving trust and reliability in the digital landscape. Together, let's defend the truth with DeepFakeDetective. 🛡️👀
+🔍🔒 Step into the forefront of media integrity with **DeepFakeDetective**, where advanced technology safeguards authenticity. Our state-of-the-art platform leads the fight against deceptive content by employing AI-powered deepfake detection, ensuring the veracity of every piece of media. Experience peace of mind as our platform verifies the authenticity of images, and videos, protecting against manipulation and misinformation. Join us in preserving trust and reliability in the digital landscape. Together, let's defend the truth with DeepFakeDetective. 🛡️👀
 
 
 # Demonstration of the Project
@@ -20,10 +20,9 @@
 # DeepFake: Models Used
 
 1. [VideoClassification 📹🔍](#VideoClassification)
-2. [Audio-Verification 🔊🔐](#Audio-Verification)
-3. [Image-Authentication 📷🔐](#Image-Authentication)
-4. [Summary 🌐👀](#Summary)
-5. [Usage Of Intel one API 📷🔐](#Intel)
+2. [Image-Authentication 📷🔐](#Image-Authentication)
+3. [Summary 🌐👀](#Summary)
+4. [Usage Of Intel one API 📷🔐](#Intel)
 
 <a name="VideoClassification"></a>
 
@@ -35,13 +34,6 @@ This code snippet showcases the utilization of a Video-Classification model, har
 
 **Notebook Link** : [Click Here](https://github.com/Arshad-Smd/DeepfakeDetection/blob/main/Backend/Models/video-classification-with-a-cnn-rnn-architecture.ipynb)
 
-<a name="Audio-Verification"></a>
-
-## Audio-Verification 🔊🔐
-
-This code implements an audio classification model using TensorFlow and Keras. The model is designed to classify audio samples into multiple classes using spectrogram features. The neural network architecture consists of convolutional (Conv2D) layers followed by pooling (MaxPooling2D) layers for feature extraction from the spectrogram data. The model then utilizes fully connected (Dense) layers for classification. The model is compiled using categorical crossentropy loss and the Adam optimizer. Leveraging the power of convolutional neural networks (CNNs) and spectrogram representations, this model achieves accurate audio classification. Additionally, optimizations provided by Intel OneDNN and TensorFlow for Intel hardware ensure efficient training times. 🎶🔊🤖💪
-
-**Notebook Link** : [Click Here](https://github.com/Arshad-Smd/DeepfakeDetection/blob/main/Backend/Models/deep-fake-voice-recognition-using-cnn.ipynb)
 
 <a name="Image-Authentication"></a>
 
@@ -61,9 +53,7 @@ This system employs a multi-modal approach for deepfake detection, integrating i
 
 1. **Image Classification:** Leveraging Vision Transformers, the system examines video frames for telltale signs of manipulation, identifying suspicious visual patterns associated with deepfake videos. 🖼️🔍
 
-2. **Audio Classification:** Utilizing CNNs and spectrogram analysis, the system assesses audio tracks for irregularities commonly found in synthesized or altered content, enhancing the detection capability of deepfake videos. 🎶🔊
-
-3. **Video Classification:** The inclusion of video classification adds another layer of scrutiny, allowing the system to analyze the content of videos for additional verification, bolstering the detection accuracy of deepfake media. 📹🔍
+2. **Video Classification:** The inclusion of video classification adds another layer of scrutiny, allowing the system to analyze the content of videos for additional verification, bolstering the detection accuracy of deepfake media. 📹🔍
 
 By integrating insights from image, audio, and video analysis, this system provides a comprehensive defense against the proliferation of deepfake media, preserving the integrity of digital content. 🛡️📽️
 
@@ -91,12 +81,6 @@ Furthermore, the adoption of the optimized version of PyTorch tailored for Intel
 
 > Comparison between processing times in Intel Developer Cloud using OneDNN and Google Colab
 
-3.**Audio Classification:** The audio classification module of our project required complex computational operations, particularly during feature extraction and model training. Carrying out these computations in Google Colab often led to extended processing durations owing to resource constraints. However, leveraging Intel Developer Cloud's CPU and XPU resources resulted in a remarkable reduction in processing time. Capitalizing on Intel's parallel processing capabilities enabled rapid audio classification, thereby enhancing the effectiveness of our audio classification model. 🌟🎶
-
-![Comparison Graph](Images/audio.png)
-
-> Comparison between processing times in Intel Developer Cloud using OneDNN and Google Colab
-
 In summary, Intel Developer Cloud's advanced CPU and XPU technologies empowered us with the computational prowess required to expedite model training and inference processes, ultimately accelerating our project development and deployment timelines. 🚀🕒
 
 ## System Workflow 🔄🔍
@@ -111,23 +95,19 @@ The system workflow illustrates the sequential steps and interactions within our
 
    - The Image Classification module interprets images and classifies them into relevant categories based on their content.
 
-3. **Audio Analysis 🎶🔍:**
-
-   - The Audio Analysis component processes audio inputs, extracting meaningful features and analyzing them to derive insights.
-
-4. **Video Classification 📹🔍:**
+3. **Video Classification 📹🔍:**
 
    - The Video Classification module categorizes videos into various classes based on their visual content and temporal features.
 
-5. **Data Fusion 🔄🔍:**
+4. **Data Fusion 🔄🔍:**
 
    - The Data Fusion stage integrates insights from image, audio, and video analyses, enriching the understanding of the input content.
 
-6. **Decision Making 🤔🔍:**
+5. **Decision Making 🤔🔍:**
 
    - In this phase, the system synthesizes the collected information and makes informed decisions or recommendations based on the integrated insights.
 
-7. **Output Presentation 📊📋:**
+6. **Output Presentation 📊📋:**
 
    - Finally, the system presents the results or recommendations to the user in a clear and understandable format, facilitating further action or decision-making.
 
@@ -158,22 +138,17 @@ Our project offers a comprehensive solution for detecting and combating deepfake
    - Our system utilizes advanced image classification techniques to analyze frames from videos and identify visual anomalies characteristic of deepfake media.
    - Leveraging state-of-the-art Vision Transformers, the system scrutinizes video frames to detect suspicious patterns indicative of manipulated content.
 
-2. **Audio Analysis for Deepfake Detection: 🎶🔊**
-
-   - In addition to image classification, our system employs audio analysis methods to assess audio tracks accompanying video content.
-   - By training Convolutional Neural Networks (CNNs) on spectrogram representations, the system detects irregularities in audio signatures, further enhancing deepfake detection accuracy.
-
-3. **Video Classification for Deepfake Detection: 📹🔍**
+2. **Video Classification for Deepfake Detection: 📹🔍**
 
    - Our system incorporates video classification techniques to analyze the content and temporal features of video sequences.
    - By categorizing videos based on their visual content, the system adds another layer of scrutiny to identify potential instances of deepfake manipulation.
 
-4. **Comprehensive Deepfake Detection: 🛡️📽️**
+3. **Comprehensive Deepfake Detection: 🛡️📽️**
 
-   - By fusing insights from image, audio, and video analyses, our system provides a robust defense against the proliferation of deepfake media.
+   - By fusing insights from image, and video analyses, our system provides a robust defense against the proliferation of deepfake media.
    - Through the integration of multi-modal deepfake detection techniques, our project safeguards the integrity of digital content and helps combat the spread of misinformation.
 
-In summary, our project combines advanced techniques in image, audio, and video analysis to offer a comprehensive solution for detecting and mitigating the impact of deepfake media, contributing to the preservation of trust and authenticity in digital content. 🌐🔍🛡️
+In summary, our project combines advanced techniques in image, and video analysis to offer a comprehensive solution for detecting and mitigating the impact of deepfake media, contributing to the preservation of trust and authenticity in digital content. 🌐🔍🛡️
 
 # How We Built It 🛠️👷‍♂️
 
@@ -189,11 +164,11 @@ Our project was meticulously crafted, combining innovative technologies and coll
 
 3. **Integration of Machine Learning Models:**
 
-   - Our project integrates cutting-edge machine learning models tailored to our specific requirements. Leveraging TensorFlow, PyTorch, and Hugging Face Transformers, we incorporated models for video, audio, and image classification tasks. This allowed us to analyze multimedia content effectively and detect anomalies indicative of deepfake manipulation. 🤖⚙️
+   - Our project integrates cutting-edge machine learning models tailored to our specific requirements. Leveraging TensorFlow, PyTorch, and Hugging Face Transformers, we incorporated models for video, and image classification tasks. This allowed us to analyze multimedia content effectively and detect anomalies indicative of deepfake manipulation. 🤖⚙️
 
 4. **Deepfake Detection Algorithms:**
 
-   - We implemented custom deepfake detection algorithms, leveraging the insights from image, audio, and video analyses. These algorithms employ sophisticated techniques to scrutinize multimedia content and identify potential instances of deepfake manipulation with high accuracy.
+   - We implemented custom deepfake detection algorithms, leveraging the insights from image, and video analyses. These algorithms employ sophisticated techniques to scrutinize multimedia content and identify potential instances of deepfake manipulation with high accuracy.
 
 5. **System Integration and Testing:**
 
