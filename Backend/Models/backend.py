@@ -13,14 +13,15 @@ import matplotlib
 matplotlib.use('Agg')  # Set this at the beginning to avoid thread issues
 import matplotlib.pyplot as plt
 from torchvision import transforms
+from tensorflow.keras.models import load_model
 from transformers import (
     AutoImageProcessor, 
     AutoModelForImageClassification,
     AutoImageProcessor as VideoProcessor,
-    AutoModelForVideoClassification,
-    AutoProcessor,
-    AutoModelForAudioClassification
+    AutoModelForVideoClassification
 )
+import pandas as pd
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Initialize the models at startup
 device = torch.device('cpu')
@@ -34,10 +35,15 @@ video_processor = VideoProcessor.from_pretrained("Ammar2k/videomae-base-finetune
 video_model = AutoModelForVideoClassification.from_pretrained("Ammar2k/videomae-base-finetuned-deepfake-subset")
 video_model.to(device)
 
-# Audio deepfake detection model initialization
-audio_processor = AutoProcessor.from_pretrained("MelodyMachine/Deepfake-audio-detection-V2")
-audio_model = AutoModelForAudioClassification.from_pretrained("MelodyMachine/Deepfake-audio-detection-V2")
-audio_model.to(device)
+# Path to Excel file for user authentication
+EXCEL_FILE_PATH = 'users.xlsx'
+
+# Create Excel file if it doesn't exist
+def init_excel_file():
+    if not os.path.exists(EXCEL_FILE_PATH):
+        df = pd.DataFrame(columns=['name', 'username', 'email', 'password'])
+        df.to_excel(EXCEL_FILE_PATH, index=False)
+        print('Excel file created successfully')
 
 def format_frames(frame, output_size):
     """
@@ -209,52 +215,21 @@ def pred_with_vit(image_path):
         return (class_names[pred_class_idx % len(class_names)], confidence)
 
 def predictFake(path):
-    """
-    Predict whether an audio file is real or fake using the Hugging Face audio model
-    
-    Args:
-        path: Path to the audio file
-        
-    Returns:
-        String indicating "fake" or "real"
-    """
-    # Load audio file
-    waveform, sample_rate = librosa.load(path, sr=16000)
-    
-    # Process the audio with the Hugging Face processor
-    inputs = audio_processor(
-        raw_speech=waveform, 
-        sampling_rate=16000, 
-        return_tensors="pt"
-    ).to(device)
-    
-    # Get prediction
-    with torch.no_grad():
-        outputs = audio_model(**inputs)
-    
-    logits = outputs.logits
-    probabilities = torch.softmax(logits, dim=1)
-    
-    # Get the predicted class
-    pred_class_idx = torch.argmax(probabilities, dim=1).item()
-    confidence = probabilities.max().item()
-    
-    # Get the label from the model's config
-    if hasattr(audio_model.config, 'id2label'):
-        pred_label = audio_model.config.id2label[pred_class_idx].lower()
-        print(f"Audio prediction: {pred_label} with confidence {confidence:.4f}")
-        
-        # Normalize to either 'fake' or 'real'
-        if 'fake' in pred_label or 'deepfake' in pred_label:
-            return "fake"
-        else:
-            return "real"
+    m,_=librosa.load(path,sr=16000)
+    max_length=500
+    mfccs = librosa.feature.mfcc(y=m, sr=16000, n_mfcc=40)
+
+    if mfccs.shape[1] < max_length:
+        mfccs = np.pad(mfccs, ((0, 0), (0, max_length - mfccs.shape[1])), mode='constant')
     else:
-        # Fallback if id2label is not available
-        class_names = ["fake", "real"]
-        result = class_names[pred_class_idx % len(class_names)]
-        print(f"Audio prediction: {result} with confidence {confidence:.4f}")
-        return result
+        mfccs = mfccs[:, :max_length]
+    
+    model=load_model('C:\\Users\\smdar\\Desktop\\Anokha project\\AudioModel.h5')
+    output=model.predict(mfccs.reshape(-1,40,500))
+    if output[0][0]>0.5:
+        return "fake"
+    else:
+        return "real"
 
 def save_images(path):
     paths = []
@@ -282,7 +257,7 @@ def save_images(path):
     return paths
 
 app = Flask(__name__)
-CORS(app, resources={r"/upload": {"origins": "http://localhost:5173"}}) 
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})  # Updated CORS to allow all routes
 
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
@@ -298,6 +273,88 @@ def find_mode(arr):
     max_count = max(counts.values())
     mode = next(key for key, value in counts.items() if value == max_count)
     return mode
+
+# Initialize the Excel file for user data
+init_excel_file()
+
+@app.route('/api/signup', methods=['POST'])
+def signup():
+    try:
+        data = request.json
+        name = data.get('name')
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        
+        # Hash password for security
+        hashed_password = generate_password_hash(password)
+        
+        # Load Excel file
+        if os.path.exists(EXCEL_FILE_PATH):
+            df = pd.read_excel(EXCEL_FILE_PATH)
+        else:
+            df = pd.DataFrame(columns=['name', 'username', 'email', 'password'])
+        
+        # Check if username or email already exists
+        if username in df['username'].values or email in df['email'].values:
+            return jsonify({'message': 'Username or email already exists'}), 400
+        
+        # Add new user
+        new_user = pd.DataFrame({
+            'name': [name],
+            'username': [username],
+            'email': [email],
+            'password': [hashed_password]
+        })
+        
+        df = pd.concat([df, new_user], ignore_index=True)
+        
+        # Save Excel file
+        df.to_excel(EXCEL_FILE_PATH, index=False)
+        
+        return jsonify({'message': 'User registered successfully'}), 201
+    
+    except Exception as e:
+        print('Error registering user:', e)
+        return jsonify({'message': 'Server error'}), 500
+
+@app.route('/api/signin', methods=['POST'])
+def signin():
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        
+        # Load Excel file
+        if not os.path.exists(EXCEL_FILE_PATH):
+            return jsonify({'message': 'Invalid credentials'}), 401
+        
+        df = pd.read_excel(EXCEL_FILE_PATH)
+        
+        # Check if user exists
+        user_row = df[df['username'] == username]
+        if user_row.empty:
+            return jsonify({'message': 'Invalid credentials'}), 401
+        
+        stored_password = user_row['password'].values[0]
+        
+        # Check password
+        if check_password_hash(stored_password, password):
+            user = {
+                'name': user_row['name'].values[0],
+                'username': user_row['username'].values[0],
+                'email': user_row['email'].values[0]
+            }
+            return jsonify({
+                'message': 'Login successful',
+                'user': user
+            }), 200
+        else:
+            return jsonify({'message': 'Invalid credentials'}), 401
+    
+    except Exception as e:
+        print('Error during login:', e)
+        return jsonify({'message': 'Server error'}), 500
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
